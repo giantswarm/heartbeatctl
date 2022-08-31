@@ -1,3 +1,4 @@
+//go:build tools
 // +build tools
 
 // This file imports packages that are used when running go generate, or used

@@ -16,6 +16,13 @@ import (
 	"github.com/giantswarm/heartbeatctl/pkg/mocks"
 )
 
+const (
+	GetMethodName     = "Get"
+	EnableMethodName  = "Enable"
+	DisableMethodName = "Disable"
+	PingMethodName    = "Ping"
+)
+
 func getName(h heartbeat.Heartbeat) string {
 	return h.Name
 }
@@ -60,6 +67,24 @@ var _ = Describe("Adapter", func() {
 				Heartbeats:     configuredHeartbeats,
 			}, nil)
 			adapter = ctl.NewCtl(repo)
+		})
+
+		When("no heartbeats are configured", func() {
+			BeforeEach(func() {
+				configuredHeartbeats = []heartbeat.Heartbeat{}
+			})
+
+			Context(GetMethodName, func() {
+				It("returns an empty list and no error", func() {
+					Expect(adapter.Get(&ctl.SelectorConfig{})).To(BeEmpty())
+				})
+
+				It("ignores selector options", func() {
+					Expect(adapter.Get(&ctl.SelectorConfig{
+						LabelSelector: "name=foo",
+					})).To(BeEmpty())
+				})
+			})
 		})
 
 		When("heartbeats are configured", func() {
@@ -108,7 +133,7 @@ var _ = Describe("Adapter", func() {
 				}
 			})
 
-			Context("Get", func() {
+			Context(GetMethodName, func() {
 				DescribeTable(
 					"filters elements correctly",
 					func(opts *ctl.SelectorConfig, expected ...string) {
@@ -181,9 +206,9 @@ var _ = Describe("Adapter", func() {
 
 							// setup the right expectation, depending on
 							// which method we're asserting
-							if methodName == "Enable" {
+							if methodName == EnableMethodName {
 								repo.EXPECT().Enable(gomock.Any(), hbName).Return(hbi, nil)
-							} else if methodName == "Disable" {
+							} else if methodName == DisableMethodName {
 								// in case of disable a successful call
 								// would set `Enabled` to false
 								hbi.Enabled = false
@@ -196,7 +221,7 @@ var _ = Describe("Adapter", func() {
 
 					It(fmt.Sprintf("calls %s on heartbeats selected by given options", methodName), func() {
 						method := adapter.Enable
-						if methodName == "Disable" {
+						if methodName == DisableMethodName {
 							method = adapter.Disable
 						}
 
@@ -209,8 +234,8 @@ var _ = Describe("Adapter", func() {
 				})
 			}
 
-			AssertMethodCalledOnSelectedHeartbeats("Enable")
-			AssertMethodCalledOnSelectedHeartbeats("Disable")
+			AssertMethodCalledOnSelectedHeartbeats(EnableMethodName)
+			AssertMethodCalledOnSelectedHeartbeats(DisableMethodName)
 
 			AssertMethodFailsFastWhenRepoCallFails := func(methodName string) {
 				Context(methodName, func() {
@@ -224,10 +249,10 @@ var _ = Describe("Adapter", func() {
 						}
 						apiErr := errors.New("API call failed")
 
-						if methodName == "Enable" {
+						if methodName == EnableMethodName {
 							repo.EXPECT().Enable(gomock.Any(), "foo").Return(fooHbi, nil)
 							repo.EXPECT().Enable(gomock.Any(), "foo-oof1").Return(nil, apiErr)
-						} else if methodName == "Disable" {
+						} else if methodName == DisableMethodName {
 							repo.EXPECT().Disable(gomock.Any(), "foo").Return(fooHbi, nil)
 							repo.EXPECT().Disable(gomock.Any(), "foo-oof1").Return(nil, apiErr)
 						}
@@ -235,7 +260,7 @@ var _ = Describe("Adapter", func() {
 						By("calling adapter method")
 
 						method := adapter.Enable
-						if methodName == "Disable" {
+						if methodName == DisableMethodName {
 							method = adapter.Disable
 						}
 						hbInfos, err := method(&ctl.SelectorConfig{
@@ -260,27 +285,74 @@ var _ = Describe("Adapter", func() {
 				})
 			}
 
-			AssertMethodFailsFastWhenRepoCallFails("Enable")
-			AssertMethodFailsFastWhenRepoCallFails("Disable")
-		})
+			AssertMethodFailsFastWhenRepoCallFails(EnableMethodName)
+			AssertMethodFailsFastWhenRepoCallFails(DisableMethodName)
 
-		When("no heartbeats are configured", func() {
-			BeforeEach(func() {
-				configuredHeartbeats = []heartbeat.Heartbeat{}
-			})
+			Context(PingMethodName, func() {
+				var (
+					expected      []string
+					expectedInfos map[string]heartbeat.PingResult = make(map[string]heartbeat.PingResult)
+				)
 
-			Context("Get", func() {
-				It("returns an empty list and no error", func() {
-					Expect(adapter.Get(&ctl.SelectorConfig{})).To(BeEmpty())
+				JustBeforeEach(func() {
+					expected = []string{"foo-oof1", "bar-oof2"}
+					for _, hbName := range expected {
+						ping := &heartbeat.PingResult{
+							Message: "PONG - Heartbeat received",
+						}
+
+						repo.EXPECT().Ping(gomock.Any(), hbName).Return(ping, nil)
+						expectedInfos[hbName] = *ping
+					}
 				})
 
-				It("ignores selector options", func() {
-					Expect(adapter.Get(&ctl.SelectorConfig{
-						LabelSelector: "name=foo",
-					})).To(BeEmpty())
+				It("calls Ping on heartbeats selected by given options", func() {
+					Expect(adapter.Ping(&ctl.SelectorConfig{
+						NameExpressions: []string{"foo.*", ".*-oof[12]"},
+						LabelSelector:   "enabled",
+						FieldSelector:   "alertPriority=P3",
+					})).To(Equal(expectedInfos))
+				})
+			})
+
+			Context(PingMethodName, func() {
+				It("fails fast when first repo call on a heartbeat fails", func() {
+					By("making first heartbeat succeed and second fail")
+
+					fooPingResult := &heartbeat.PingResult{
+						Message: "PONG - Heartbeat received",
+					}
+					apiErr := errors.New("API call failed")
+
+					repo.EXPECT().Ping(gomock.Any(), "foo").Return(fooPingResult, nil)
+					repo.EXPECT().Ping(gomock.Any(), "foo-oof1").Return(nil, apiErr)
+
+					By("calling adapter method")
+
+					pingResults, err := adapter.Ping(&ctl.SelectorConfig{
+						NameExpressions: []string{"foo.*"},
+					})
+
+					By("ensuring we get an error")
+
+					Expect(err).To(SatisfyAll(
+						MatchError(apiErr),
+						// assert that error tells us which heartbeat caused the error
+						WithTransform(
+							func(e error) string { return e.Error() },
+							ContainSubstring("foo-oof1"),
+						),
+					))
+
+					By("ensuring we also get info about the heartbeat that succeeded")
+
+					Expect(pingResults).To(Equal(map[string]heartbeat.PingResult{
+						"foo": *fooPingResult,
+					}))
 				})
 			})
 		})
+
 	})
 
 	Describe("failure modes", func() {
@@ -303,12 +375,14 @@ var _ = Describe("Adapter", func() {
 						opts := &ctl.SelectorConfig{NameExpressions: []string{".*"}}
 
 						switch methodName {
-						case "Get":
+						case GetMethodName:
 							_, err = adapter.Get(opts)
-						case "Enable":
+						case EnableMethodName:
 							_, err = adapter.Enable(opts)
-						case "Disable":
+						case DisableMethodName:
 							_, err = adapter.Disable(opts)
+						case PingMethodName:
+							_, err = adapter.Ping(opts)
 						}
 
 						Expect(err).NotTo(Succeed())
@@ -317,9 +391,10 @@ var _ = Describe("Adapter", func() {
 				})
 			}
 
-			AssertMethodPropagatesError("Get")
-			AssertMethodPropagatesError("Enable")
-			AssertMethodPropagatesError("Disable")
+			AssertMethodPropagatesError(GetMethodName)
+			AssertMethodPropagatesError(EnableMethodName)
+			AssertMethodPropagatesError(DisableMethodName)
+			AssertMethodPropagatesError(PingMethodName)
 		})
 
 		When("no selectors are given", func() {
@@ -327,8 +402,8 @@ var _ = Describe("Adapter", func() {
 
 			BeforeEach(func() {
 				methods = map[string]func(*ctl.SelectorConfig) ([]heartbeat.HeartbeatInfo, error){
-					"Enable":  adapter.Enable,
-					"Disable": adapter.Disable,
+					EnableMethodName:  adapter.Enable,
+					DisableMethodName: adapter.Disable,
 				}
 			})
 
@@ -346,8 +421,18 @@ var _ = Describe("Adapter", func() {
 				})
 			}
 
-			AssertMethodFails("Enable")
-			AssertMethodFails("Disable")
+			AssertMethodFails(EnableMethodName)
+			AssertMethodFails(DisableMethodName)
+
+			Context(PingMethodName, func() {
+				It("fails", func() {
+					results, err := adapter.Ping(&ctl.SelectorConfig{})
+					Expect(err).To(MatchError(
+						"No selector options given, to target all heartbeats pass '.*' name expression explicitly.",
+					))
+					Expect(results).To(BeNil())
+				})
+			})
 		})
 	})
 })

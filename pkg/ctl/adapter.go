@@ -78,6 +78,28 @@ func (c *ctl) Disable(opts *SelectorConfig) ([]heartbeat.HeartbeatInfo, error) {
 	return c.enableDisableHeartbeats(c.repo.Disable, opts)
 }
 
+func (c *ctl) Ping(opts *SelectorConfig) (map[string]heartbeat.PingResult, error) {
+	if opts.empty() {
+		return nil, ErrNoSelector
+	}
+
+	heartbeats, err := c.Get(opts)
+	if err != nil {
+		return nil, err
+	}
+
+	var pingResults = make(map[string]heartbeat.PingResult)
+	for _, h := range heartbeats {
+		// TODO: context.TODO
+		result, err := c.repo.Ping(context.TODO(), h.Name)
+		if err != nil {
+			return pingResults, fmt.Errorf("heartbeat \"%s\" failed: %w", h.Name, err)
+		}
+		pingResults[h.Name] = *result
+	}
+	return pingResults, nil
+}
+
 // enableDisableHeartbeats applies given method (can be either `repo.Enable` or
 // `repo.Disable`) to all heartbeats matched by given selector options, which
 // must be non-empty.

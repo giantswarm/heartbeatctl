@@ -27,8 +27,9 @@ func New(cfg *client.Config) (Port, error) {
 	}
 
 	if cfg.Logger == nil {
-		cfg.Logger = logrus.New()
-		cfg.Logger.SetLevel(logrus.PanicLevel)
+		logger := logrus.New()
+		logger.SetLevel(logrus.PanicLevel)
+		cfg.Logger = logger
 	}
 
 	return heartbeat.NewClient(cfg)
