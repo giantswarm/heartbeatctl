@@ -6,7 +6,7 @@ require (
 	github.com/MakeNowJust/heredoc v1.0.0
 	github.com/golang/mock v1.6.0
 	github.com/hashicorp/go-cleanhttp v0.5.1 // indirect
-	github.com/onsi/ginkgo v1.16.4
+	github.com/onsi/ginkgo v1.16.5
 	github.com/onsi/gomega v1.20.1
 	github.com/opsgenie/opsgenie-go-sdk-v2 v1.2.13
 	github.com/ryanuber/columnize v2.1.2+incompatible
