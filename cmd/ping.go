@@ -110,12 +110,11 @@ func runPing(opts *pingCmdOptions) {
 		log.Fatalf("Failed to init OpsGenie client: %v\n", err)
 	}
 	c := ctl.NewCtl(repo)
-
 	pings, err := c.Ping(opts.selectorOptions.ToConfig())
-	for hbn, ping := range pings {
-		fmt.Printf("heartbeat \"%s\": %s\n", hbn, ping.Message)
-	}
 	if err != nil {
 		log.Fatalf("Failed to ping other heartbeats: %v\n", err)
+	}
+	for hbn, ping := range pings {
+		fmt.Printf("heartbeat \"%s\": %s\n", hbn, ping.Message)
 	}
 }
