@@ -83,7 +83,20 @@ func (c *ctl) Ping(opts *SelectorConfig) (map[string]heartbeat.PingResult, error
 		return nil, ErrNoSelector
 	}
 
-	return make(map[string]heartbeat.PingResult), nil
+	heartbeats, err := c.Get(opts)
+	if err != nil {
+		return nil, err
+	}
+
+	var pingResults = make(map[string]heartbeat.PingResult)
+	for _, h := range heartbeats {
+		result, err := c.repo.Ping(context.Background(), h.Name)
+		if err != nil {
+			return pingResults, fmt.Errorf("heartbeat \"%s\" failed: %w", h.Name, err)
+		}
+		pingResults[h.Name] = *result
+	}
+	return pingResults, nil
 }
 
 // enableDisableHeartbeats applies given method (can be either `repo.Enable` or
