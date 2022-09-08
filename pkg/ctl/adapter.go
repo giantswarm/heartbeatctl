@@ -23,7 +23,7 @@ func NewCtl(r client.Port) Port {
 }
 
 func (c *ctl) Get(opts *SelectorConfig) ([]heartbeat.Heartbeat, error) {
-	ret, err := c.repo.List(context.TODO())
+	ret, err := c.repo.List(context.Background())
 	if err != nil {
 		return nil, err
 	}
@@ -114,8 +114,7 @@ func (c *ctl) enableDisableHeartbeats(meth func(context.Context, string) (*heart
 
 	var hbInfos []heartbeat.HeartbeatInfo
 	for _, h := range heartbeats {
-		// TODO: context.TODO
-		hbi, err := meth(context.TODO(), h.Name)
+		hbi, err := meth(context.Background(), h.Name)
 		if err != nil {
 			return hbInfos, fmt.Errorf("heartbeat \"%s\" failed: %w", h.Name, err)
 		}
