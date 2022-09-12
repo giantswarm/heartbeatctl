@@ -110,7 +110,7 @@ func runPing(opts *pingCmdOptions) {
 	if err != nil {
 		log.Fatalf("Failed to ping heartbeats: %v\n", err)
 	}
-	for hbn, ping := range pings {
-		fmt.Printf("heartbeat \"%s\": %s\n", hbn, ping.Message)
+	for name, ping := range pings {
+		fmt.Printf("heartbeat \"%s\": %s\n", name, ping.Message)
 	}
 }
