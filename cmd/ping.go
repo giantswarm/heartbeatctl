@@ -19,7 +19,7 @@ type pingCmdOptions struct {
 
 var (
 	pingDocLong = heredoc.Doc(`
-	  Issue a ping request to specified heartbeats.
+	        Issue a ping request to specified heartbeats.
 		
 		Beware that receiving a successful response does not necessarily mean that 
 		the heartbeat exists: https://docs.opsgenie.com/docs/heartbeat-api#ping-heartbeat-request
