@@ -19,11 +19,14 @@ type pingCmdOptions struct {
 
 var (
 	pingDocLong = heredoc.Doc(`
-	    Issue a ping request to specified heartbeats.
+	  Issue a ping request to specified heartbeats.
+		
 		Beware that receiving a successful response does not necessarily mean that 
 		the heartbeat exists: https://docs.opsgenie.com/docs/heartbeat-api#ping-heartbeat-request
-		Heartbeats to ping can be specified by a combination of selectors all of
+		
+		Heartbeats to enable can be specified by a combination of selectors all of
 		which must match against a heartbeat for it to be selected.
+		
 		The first is a kubectl-like label selector that can be specified using a
 		'--selector' flag. Labels are any of the heartbeat fields like 'name',
 		'interval', 'ownerTeam/name' or 'alertPriority', with boolean fields like
@@ -107,7 +110,7 @@ func runPing(opts *pingCmdOptions) {
 	if err != nil {
 		log.Fatalf("Failed to ping heartbeats: %v\n", err)
 	}
-	for hbn, ping := range pings {
-		fmt.Printf("heartbeat \"%s\": %s\n", hbn, ping.Message)
+	for name, ping := range pings {
+		fmt.Printf("heartbeat \"%s\": %s\n", name, ping.Message)
 	}
 }
