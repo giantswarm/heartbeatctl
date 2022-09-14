@@ -19,4 +19,9 @@ type Port interface {
 	// in this case must specify at least one selector or name (to target all
 	// heartbeats specify a `nameExpressions=['.*']` rule explicitly).
 	Disable(*SelectorConfig) ([]heartbeat.HeartbeatInfo, error)
+
+	// Ping pings all heartbeats selected by given SelectorConfig, which
+	// in this case must specify at least one selector or name (to target all
+	// heartbeats specify a `nameExpressions=['.*']` rule explicitly).
+	Ping(*SelectorConfig) (map[string]heartbeat.PingResult, error)
 }

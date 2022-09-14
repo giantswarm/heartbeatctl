@@ -78,6 +78,14 @@ func (c *ctl) Disable(opts *SelectorConfig) ([]heartbeat.HeartbeatInfo, error) {
 	return c.enableDisableHeartbeats(c.repo.Disable, opts)
 }
 
+func (c *ctl) Ping(opts *SelectorConfig) (map[string]heartbeat.PingResult, error) {
+	if opts.empty() {
+		return nil, ErrNoSelector
+	}
+
+	return make(map[string]heartbeat.PingResult), nil
+}
+
 // enableDisableHeartbeats applies given method (can be either `repo.Enable` or
 // `repo.Disable`) to all heartbeats matched by given selector options, which
 // must be non-empty.
