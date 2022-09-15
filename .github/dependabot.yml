@@ -4,6 +4,14 @@
 #
 version: 2
 updates:
+  - package-ecosystem: docker
+    directory: "/"
+    schedule:
+      interval: weekly
+      time: "04:00"
+    open-pull-requests-limit: 10
+    reviewers:
+      - giantswarm/team-atlas
   - package-ecosystem: github-actions
     directory: "/"
     schedule:
