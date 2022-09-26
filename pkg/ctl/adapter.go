@@ -89,12 +89,17 @@ func (c *ctl) Ping(opts *SelectorConfig) (map[string]heartbeat.PingResult, error
 	}
 
 	var pingResults = make(map[string]heartbeat.PingResult)
+	var failedPings = make([]string, 0)
 	for _, h := range heartbeats {
 		result, err := c.repo.Ping(context.Background(), h.Name)
 		if err != nil {
-			return pingResults, fmt.Errorf("heartbeat \"%s\" failed: %w", h.Name, err)
+			failedPings = append(failedPings, h.Name)
 		}
 		pingResults[h.Name] = *result
+	}
+
+	if len(failedPings) > 0 {
+		return pingResults, fmt.Errorf("heartbeats \"%v\" failed", failedPings)
 	}
 	return pingResults, nil
 }
