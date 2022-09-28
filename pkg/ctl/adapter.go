@@ -95,7 +95,10 @@ func (c *ctl) Ping(opts *SelectorConfig) (map[string]heartbeat.PingResult, error
 		if err != nil {
 			failedPings = append(failedPings, h.Name)
 		}
-		pingResults[h.Name] = *result
+
+		if result != nil {
+			pingResults[h.Name] = *result
+		}
 	}
 
 	if len(failedPings) > 0 {

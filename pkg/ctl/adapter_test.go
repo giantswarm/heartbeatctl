@@ -324,6 +324,7 @@ var _ = Describe("Adapter", func() {
 					}
 					apiErr := errors.New("API call failed")
 
+					repo.EXPECT().Ping(gomock.Any(), "foo-rab1").Return(fooPingResult, nil)
 					repo.EXPECT().Ping(gomock.Any(), "foo").Return(fooPingResult, nil)
 					repo.EXPECT().Ping(gomock.Any(), "foo-oof1").Return(nil, apiErr)
 
@@ -336,7 +337,7 @@ var _ = Describe("Adapter", func() {
 					By("ensuring we get an error")
 
 					Expect(err).To(SatisfyAll(
-						MatchError(apiErr),
+						MatchError(fmt.Errorf("heartbeats \"[foo-oof1]\" failed")),
 						// assert that error tells us which heartbeat caused the error
 						WithTransform(
 							func(e error) string { return e.Error() },
@@ -347,7 +348,8 @@ var _ = Describe("Adapter", func() {
 					By("ensuring we also get info about the heartbeat that succeeded")
 
 					Expect(pingResults).To(Equal(map[string]heartbeat.PingResult{
-						"foo": *fooPingResult,
+						"foo":      *fooPingResult,
+						"foo-rab1": *fooPingResult,
 					}))
 				})
 			})
