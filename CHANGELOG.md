@@ -7,8 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.0] - 2022-09-29
+
 ### Added
 
 - First release.
 
-[Unreleased]: https://github.com/giantswarm/heartbeatctl/tree/main
+[Unreleased]: https://github.com/giantswarm/heartbeatctl/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/giantswarm/heartbeatctl/releases/tag/v0.1.0
