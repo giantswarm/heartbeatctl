@@ -3,6 +3,7 @@ package ctl_test
 import (
 	"errors"
 	"fmt"
+	"sort"
 
 	"github.com/golang/mock/gomock"
 	. "github.com/onsi/ginkgo"
@@ -66,6 +67,12 @@ var _ = Describe("Adapter", func() {
 				ResultMetadata: client.ResultMetadata{RequestId: "1", ResponseTime: 2.2},
 				Heartbeats:     configuredHeartbeats,
 			}, nil)
+			for _, hb := range configuredHeartbeats {
+				repo.EXPECT().Get(gomock.Any(), hb.Name).Return(&heartbeat.GetResult{
+					ResultMetadata: client.ResultMetadata{RequestId: "1", ResponseTime: 2.2},
+					Heartbeat:      hb,
+				}, nil)
+			}
 			adapter = ctl.NewCtl(repo)
 		})
 
@@ -131,6 +138,9 @@ var _ = Describe("Adapter", func() {
 						AlertTags:     []string{"tagged", "managed-by: foobricator"},
 					},
 				}
+				sort.Slice(configuredHeartbeats, func(i, j int) bool {
+					return configuredHeartbeats[i].Name < configuredHeartbeats[j].Name
+				})
 			})
 
 			Context(GetMethodName, func() {
@@ -142,22 +152,22 @@ var _ = Describe("Adapter", func() {
 					Entry(
 						"returns everything without filters",
 						&ctl.SelectorConfig{},
-						"foo", "foo-oof1", "foo-rab1", "bar", "bar-oof2", "bar-rab2",
+						"bar", "bar-oof2", "bar-rab2", "foo", "foo-oof1", "foo-rab1",
 					),
 					Entry(
 						"returns only heartbeats matching a label selector when given",
 						&ctl.SelectorConfig{LabelSelector: "managed-by=foobricator"},
-						"foo-oof1", "foo-rab1", "bar-oof2", "bar-rab2",
+						"bar-oof2", "bar-rab2", "foo-oof1", "foo-rab1",
 					),
 					Entry(
 						"returns only heartbeats matching a complex label selector when given",
 						&ctl.SelectorConfig{LabelSelector: "!enabled,managed-by=foobricator"},
-						"foo-rab1", "bar-rab2",
+						"bar-rab2", "foo-rab1",
 					),
 					Entry(
 						"returns only heartbeats matching a field selector when given",
 						&ctl.SelectorConfig{FieldSelector: "alertPriority=P3"},
-						"foo-oof1", "bar-oof2",
+						"bar-oof2", "foo-oof1",
 					),
 					Entry(
 						"returns only heartbeats matching both label and field selectors when given",
@@ -167,12 +177,12 @@ var _ = Describe("Adapter", func() {
 					Entry(
 						"returns specific heartbeats when given explicit names",
 						&ctl.SelectorConfig{NameExpressions: []string{"foo", "foo-rab1", "bar-oof2"}},
-						"foo", "foo-rab1", "bar-oof2",
+						"bar-oof2", "foo", "foo-rab1",
 					),
 					Entry(
 						"returns a union of sets of heartbeats for any passed name regexes",
 						&ctl.SelectorConfig{NameExpressions: []string{"foo.*", ".*-oof[12]"}},
-						"foo", "foo-oof1", "foo-rab1", "bar-oof2",
+						"bar-oof2", "foo", "foo-oof1", "foo-rab1",
 					),
 					Entry(
 						"returns only heartbeats matching all selectors when given",
@@ -181,7 +191,7 @@ var _ = Describe("Adapter", func() {
 							LabelSelector:   "enabled",
 							FieldSelector:   "alertPriority=P3",
 						},
-						"foo-oof1", "bar-oof2",
+						"bar-oof2", "foo-oof1",
 					),
 				)
 			})
@@ -196,7 +206,7 @@ var _ = Describe("Adapter", func() {
 					)
 
 					JustBeforeEach(func() {
-						expected = []string{"foo-oof1", "bar-oof2"}
+						expected = []string{"bar-oof2", "foo-oof1"}
 						for _, hbName := range expected {
 							hbi := &heartbeat.HeartbeatInfo{
 								Name:    hbName,

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"regexp"
+	"sort"
 	"strings"
 	"sync"
 
@@ -29,7 +30,6 @@ func (c *ctl) Get(opts *SelectorConfig) ([]heartbeat.Heartbeat, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	// As expiry field is incorrect due to OpsGenie API bug,
 	// request each heartbeat individually (in parallel),
 	// which returns the correct expiry data.
@@ -39,25 +39,23 @@ func (c *ctl) Get(opts *SelectorConfig) ([]heartbeat.Heartbeat, error) {
 	for _, hb := range ret.Heartbeats {
 		wg.Add(1)
 
-		go func(hb heartbeat.Heartbeat, ch chan heartbeat.Heartbeat, wg *sync.WaitGroup) {
-			defer wg.Done()
-
+		go func(hb heartbeat.Heartbeat, ch chan heartbeat.Heartbeat) {
 			newHb, err := c.repo.Get(context.Background(), hb.Name)
 			if err != nil {
 				log.Fatalf("%v\n", err)
 			}
 
 			ch <- newHb.Heartbeat
-		}(hb, ch, &wg)
+		}(hb, ch)
 	}
 
-	heartbeats := make([]heartbeat.Heartbeat, len(ret.Heartbeats))
-
-	go func() {
+	heartbeats := make([]heartbeat.Heartbeat, 0)
+	go func(wg *sync.WaitGroup) {
 		for hb := range ch {
 			heartbeats = append(heartbeats, hb)
+			wg.Done()
 		}
-	}()
+	}(&wg)
 
 	wg.Wait()
 	close(ch)
@@ -97,6 +95,10 @@ func (c *ctl) Get(opts *SelectorConfig) ([]heartbeat.Heartbeat, error) {
 
 		filtered = append(filtered, h)
 	}
+
+	sort.Slice(filtered, func(i, j int) bool {
+		return filtered[i].Name < filtered[j].Name
+	})
 
 	return filtered, nil
 }
