@@ -3,8 +3,10 @@ package ctl
 import (
 	"context"
 	"fmt"
+	"log"
 	"regexp"
 	"strings"
+	"sync"
 
 	"github.com/opsgenie/opsgenie-go-sdk-v2/heartbeat"
 	"k8s.io/apimachinery/pkg/fields"
@@ -27,7 +29,38 @@ func (c *ctl) Get(opts *SelectorConfig) ([]heartbeat.Heartbeat, error) {
 	if err != nil {
 		return nil, err
 	}
-	heartbeats := ret.Heartbeats
+
+	// As expiry field is incorrect due to OpsGenie API bug,
+	// request each heartbeat individually (in parallel),
+	// which returns the correct expiry data.
+	var wg sync.WaitGroup
+	ch := make(chan heartbeat.Heartbeat)
+
+	for _, hb := range ret.Heartbeats {
+		wg.Add(1)
+
+		go func(hb heartbeat.Heartbeat, ch chan heartbeat.Heartbeat, wg *sync.WaitGroup) {
+			defer wg.Done()
+
+			newHb, err := c.repo.Get(context.Background(), hb.Name)
+			if err != nil {
+				log.Fatalf("%v\n", err)
+			}
+
+			ch <- newHb.Heartbeat
+		}(hb, ch, &wg)
+	}
+
+	heartbeats := make([]heartbeat.Heartbeat, len(ret.Heartbeats))
+
+	go func() {
+		for hb := range ch {
+			heartbeats = append(heartbeats, hb)
+		}
+	}()
+
+	wg.Wait()
+	close(ch)
 
 	if len(opts.NameExpressions) > 0 {
 		heartbeats, err = filterNames(heartbeats, opts.NameExpressions)
@@ -35,8 +68,6 @@ func (c *ctl) Get(opts *SelectorConfig) ([]heartbeat.Heartbeat, error) {
 			return nil, err
 		}
 	}
-
-	// TODO: resolve heartbeats
 
 	ls := labels.Everything()
 	if opts.LabelSelector != "" {
