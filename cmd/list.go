@@ -67,24 +67,23 @@ func listRun(cmd *cobra.Command, args []string) {
 	for _, hb := range listHeartbeats {
 		wg.Add(1)
 
-		go func(hb heartbeat.Heartbeat, ch chan heartbeat.Heartbeat, wg *sync.WaitGroup) {
-			defer wg.Done()
-
+		go func(hb heartbeat.Heartbeat, ch chan heartbeat.Heartbeat) {
 			newHb, err := heartbeatClient.Get(context.Background(), hb.Name)
 			if err != nil {
 				log.Fatalf("%v\n", err)
 			}
 
 			ch <- newHb.Heartbeat
-		}(hb, ch, &wg)
+		}(hb, ch)
 	}
 
 	heartbeats := []heartbeat.Heartbeat{}
-	go func() {
+	go func(wg *sync.WaitGroup) {
 		for hb := range ch {
 			heartbeats = append(heartbeats, hb)
+			wg.Done()
 		}
-	}()
+	}(&wg)
 
 	wg.Wait()
 	close(ch)
