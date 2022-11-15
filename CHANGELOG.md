@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Bump github.com/onsi/gomega from 1.20.2 to 1.21.1
 - Bump alpine from 3.16.2 to 3.16.3
+- Bump github.com/spf13/cobra from 1.5.0 to 1.6.1
 
 ## [0.1.2] - 2022-10-05
 
