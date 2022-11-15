@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Bump github.com/onsi/gomega from 1.20.2 to 1.21.1
+- Bump alpine from 3.16.2 to 3.16.3
 
 ## [0.1.2] - 2022-10-05
 
