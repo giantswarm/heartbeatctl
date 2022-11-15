@@ -1,0 +1,3 @@
+# pkg:golang/golang.org/x/text@v0.3.7
+# 1 known vulnerabilities affecting installed version
+CVE-2022-32149 until=2023-02-01
