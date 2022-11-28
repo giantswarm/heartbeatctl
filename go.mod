@@ -7,7 +7,7 @@ require (
 	github.com/golang/mock v1.6.0
 	github.com/onsi/ginkgo v1.16.5
 	github.com/onsi/gomega v1.24.1
-	github.com/opsgenie/opsgenie-go-sdk-v2 v1.2.13
+	github.com/opsgenie/opsgenie-go-sdk-v2 v1.2.14
 	github.com/ryanuber/columnize v2.1.2+incompatible
 	github.com/sirupsen/logrus v1.9.0
 	github.com/spf13/cobra v1.6.1
