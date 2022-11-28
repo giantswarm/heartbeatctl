@@ -130,8 +130,8 @@ github.com/onsi/gomega v1.22.1/go.mod h1:x6n7VNe4hw0vkyYUM4mjIXx3JbLiPaBPNgB7PRQ
 github.com/onsi/gomega v1.24.0/go.mod h1:Z/NWtiqwBrwUt4/2loMmHL63EDLnYHmVbuBpDr2vQAg=
 github.com/onsi/gomega v1.24.1 h1:KORJXNNTzJXzu4ScJWssJfJMnJ+2QJqhoQSRwNlze9E=
 github.com/onsi/gomega v1.24.1/go.mod h1:3AOiACssS3/MajrniINInwbfOOtfZvplPzuRSmvt1jM=
-github.com/opsgenie/opsgenie-go-sdk-v2 v1.2.13 h1:nV98dkBpqaYbDnhefmOQ+Rn4hE+jD6AtjYHXaU5WyJI=
-github.com/opsgenie/opsgenie-go-sdk-v2 v1.2.13/go.mod h1:4OjcxgwdXzezqytxN534MooNmrxRD50geWZxTD7845s=
+github.com/opsgenie/opsgenie-go-sdk-v2 v1.2.14 h1:ni+M5q9QIZQq5xQiYzbttDZpPQogPWx8MdHpvZtWcTE=
+github.com/opsgenie/opsgenie-go-sdk-v2 v1.2.14/go.mod h1:4OjcxgwdXzezqytxN534MooNmrxRD50geWZxTD7845s=
 github.com/pkg/errors v0.8.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
 github.com/pkg/errors v0.9.1 h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=
 github.com/pkg/errors v0.9.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
