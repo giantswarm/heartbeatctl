@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/MakeNowJust/heredoc"
+	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/spf13/cobra"
 
 	"github.com/giantswarm/heartbeatctl/pkg/client"
