@@ -1,7 +1,7 @@
 package conv_test
 
 import (
-	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	"github.com/opsgenie/opsgenie-go-sdk-v2/heartbeat"
 	"github.com/opsgenie/opsgenie-go-sdk-v2/og"
