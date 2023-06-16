@@ -1,4 +1,4 @@
-FROM alpine:3.18.0
+FROM alpine:3.18.2
 
 ADD ./heartbeatctl /usr/local/bin/heartbeatctl
 
