@@ -5,7 +5,7 @@ go 1.19
 require (
 	github.com/MakeNowJust/heredoc/v2 v2.0.1
 	github.com/golang/mock v1.6.0
-	github.com/onsi/ginkgo/v2 v2.10.0
+	github.com/onsi/ginkgo/v2 v2.11.0
 	github.com/onsi/gomega v1.27.8
 	github.com/opsgenie/opsgenie-go-sdk-v2 v1.2.19
 	github.com/ryanuber/columnize v2.1.2+incompatible
@@ -26,7 +26,7 @@ require (
 	github.com/pkg/errors v0.9.1 // indirect
 	golang.org/x/mod v0.10.0 // indirect
 	golang.org/x/net v0.10.0 // indirect
-	golang.org/x/sys v0.8.0 // indirect
+	golang.org/x/sys v0.9.0 // indirect
 	golang.org/x/text v0.9.0 // indirect
 	golang.org/x/tools v0.9.3 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
