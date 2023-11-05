@@ -10,7 +10,7 @@ require (
 	github.com/opsgenie/opsgenie-go-sdk-v2 v1.2.22
 	github.com/ryanuber/columnize v2.1.2+incompatible
 	github.com/sirupsen/logrus v1.9.3
-	github.com/spf13/cobra v1.7.0
+	github.com/spf13/cobra v1.8.0
 	github.com/spf13/pflag v1.0.5
 	k8s.io/apimachinery v0.24.0
 )
