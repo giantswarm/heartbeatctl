@@ -6,7 +6,7 @@ require (
 	github.com/MakeNowJust/heredoc/v2 v2.0.1
 	github.com/golang/mock v1.6.0
 	github.com/onsi/ginkgo/v2 v2.17.1
-	github.com/onsi/gomega v1.32.0
+	github.com/onsi/gomega v1.33.0
 	github.com/opsgenie/opsgenie-go-sdk-v2 v1.2.22
 	github.com/ryanuber/columnize v2.1.2+incompatible
 	github.com/sirupsen/logrus v1.9.3
@@ -25,8 +25,8 @@ require (
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	golang.org/x/mod v0.14.0 // indirect
-	golang.org/x/net v0.20.0 // indirect
-	golang.org/x/sys v0.16.0 // indirect
+	golang.org/x/net v0.23.0 // indirect
+	golang.org/x/sys v0.18.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
 	golang.org/x/tools v0.17.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
