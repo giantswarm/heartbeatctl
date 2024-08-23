@@ -1,6 +1,8 @@
 module github.com/giantswarm/heartbeatctl
 
-go 1.19
+go 1.22.0
+
+toolchain go1.23.0
 
 require (
 	github.com/MakeNowJust/heredoc/v2 v2.0.1
@@ -12,7 +14,7 @@ require (
 	github.com/sirupsen/logrus v1.9.3
 	github.com/spf13/cobra v1.8.1
 	github.com/spf13/pflag v1.0.5
-	k8s.io/apimachinery v0.28.3
+	k8s.io/apimachinery v0.31.0
 )
 
 require (
@@ -32,6 +34,6 @@ require (
 	golang.org/x/text v0.17.0 // indirect
 	golang.org/x/tools v0.24.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
-	k8s.io/klog/v2 v2.110.1 // indirect
-	k8s.io/utils v0.0.0-20230726121419-3b25d923346b // indirect
+	k8s.io/klog/v2 v2.130.1 // indirect
+	k8s.io/utils v0.0.0-20240711033017-18e509b52bc8 // indirect
 )
