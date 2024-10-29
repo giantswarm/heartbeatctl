@@ -6,43 +6,47 @@ orbs:
 workflows:
   go-build:
     jobs:
-      - architect/go-build:
-          name: go-build
-          binary: heartbeatctl
-          filters:
+    - architect/go-build:
+        name: go-build
+        binary: heartbeatctl
+        filters:
             # Needed to trigger job also on git tag.
-            tags:
-              only: /^v.*/
+          tags:
+            only: /^v.*/
 
-      - architect/go-build:
-          name: go-build-heartbeatctl-linux-amd64
-          binary: build/heartbeatctl-linux-amd64/heartbeatctl
-          os: linux
-          filters:
-            branches:
-              only: main
+    - architect/go-build:
+        name: go-build-heartbeatctl-linux-amd64
+        binary: build/heartbeatctl-linux-amd64/heartbeatctl
+        os: linux
+        filters:
+          branches:
+            only: main
             # Needed to trigger job also on git tag.
-            tags:
-              only: /^v.*/
+          tags:
+            only: /^v.*/
 
-      - architect/go-build:
-          name: go-build-heartbeatctl-darwin-amd64
-          binary: build/heartbeatctl-darwin-amd64/heartbeatctl
-          os: darwin
-          filters:
-            branches:
-              only: main
+    - architect/go-build:
+        name: go-build-heartbeatctl-darwin-amd64
+        binary: build/heartbeatctl-darwin-amd64/heartbeatctl
+        os: darwin
+        filters:
+          branches:
+            only: main
             # Needed to trigger job also on git tag.
-            tags:
-              only: /^v.*/
+          tags:
+            only: /^v.*/
 
-      - architect/push-to-registries:
-          context: architect
-          name: push-to-registries
-          requires:
-            - go-build
-          filters:
+    - architect/push-to-registries:
+        context: architect
+        name: push-to-registries
+        requires:
+        - go-build
+        filters:
             # Needed to trigger job also on git tag.
-            tags:
-              only: /^v.*/
+          tags:
+            only: /^v.*/
 
+          branches:
+            ignore:
+            - main
+            - master
