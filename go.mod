@@ -2,7 +2,7 @@ module github.com/giantswarm/heartbeatctl
 
 go 1.22.0
 
-toolchain go1.23.2
+toolchain go1.23.3
 
 require (
 	github.com/MakeNowJust/heredoc/v2 v2.0.1
