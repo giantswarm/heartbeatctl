@@ -215,9 +215,10 @@ var _ = Describe("Adapter", func() {
 
 							// setup the right expectation, depending on
 							// which method we're asserting
-							if methodName == EnableMethodName {
+							switch methodName {
+							case EnableMethodName:
 								repo.EXPECT().Enable(gomock.Any(), hbName).Return(hbi, nil)
-							} else if methodName == DisableMethodName {
+							case DisableMethodName:
 								// in case of disable a successful call
 								// would set `Enabled` to false
 								hbi.Enabled = false
@@ -258,10 +259,11 @@ var _ = Describe("Adapter", func() {
 						}
 						apiErr := errors.New("API call failed")
 
-						if methodName == EnableMethodName {
+						switch methodName {
+						case EnableMethodName:
 							repo.EXPECT().Enable(gomock.Any(), "foo").Return(fooHbi, nil)
 							repo.EXPECT().Enable(gomock.Any(), "foo-oof1").Return(nil, apiErr)
-						} else if methodName == DisableMethodName {
+						case DisableMethodName:
 							repo.EXPECT().Disable(gomock.Any(), "foo").Return(fooHbi, nil)
 							repo.EXPECT().Disable(gomock.Any(), "foo-oof1").Return(nil, apiErr)
 						}
@@ -300,7 +302,7 @@ var _ = Describe("Adapter", func() {
 			Context(PingMethodName, func() {
 				var (
 					expected      []string
-					expectedInfos map[string]heartbeat.PingResult = make(map[string]heartbeat.PingResult)
+					expectedInfos = make(map[string]heartbeat.PingResult)
 				)
 
 				JustBeforeEach(func() {
@@ -425,7 +427,7 @@ var _ = Describe("Adapter", func() {
 					It("fails", func() {
 						hbInfos, err := methods[name](&ctl.SelectorConfig{})
 						Expect(err).To(MatchError(
-							"No selector options given, to target all heartbeats pass '.*' name expression explicitly.",
+							"no selector options given, to target all heartbeats pass '.*' name expression explicitly",
 						))
 						Expect(hbInfos).To(BeNil())
 					})
@@ -439,7 +441,7 @@ var _ = Describe("Adapter", func() {
 				It("fails", func() {
 					results, err := adapter.Ping(&ctl.SelectorConfig{})
 					Expect(err).To(MatchError(
-						"No selector options given, to target all heartbeats pass '.*' name expression explicitly.",
+						"no selector options given, to target all heartbeats pass '.*' name expression explicitly",
 					))
 					Expect(results).To(BeNil())
 				})
