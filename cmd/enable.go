@@ -32,7 +32,7 @@ var (
 		so for example tag 'foo' becomes label 'foo' value 'true' and tag 'foo: bar'
 		becomes label 'foo' value 'bar'. Label selector then allows you to use
 		expressions with operators like '=', '==', '!=', 'in', 'notin', 'X', '!X'.
-		
+
 		The second is a kubectl-like field selector specified with '--field-selector'
 		flag. This is similar but simpler, fields are exactly the same as fields in
 		heartbeat object with first letter lowercased, and the only operators allowed
