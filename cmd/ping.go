@@ -20,13 +20,13 @@ type pingCmdOptions struct {
 var (
 	pingDocLong = heredoc.Doc(`
 	        Issue a ping request to specified heartbeats.
-		
-		Beware that receiving a successful response does not necessarily mean that 
+
+		Beware that receiving a successful response does not necessarily mean that
 		the heartbeat exists: https://docs.opsgenie.com/docs/heartbeat-api#ping-heartbeat-request
-		
+
 		Heartbeats to enable can be specified by a combination of selectors all of
 		which must match against a heartbeat for it to be selected.
-		
+
 		The first is a kubectl-like label selector that can be specified using a
 		'--selector' flag. Labels are any of the heartbeat fields like 'name',
 		'interval', 'ownerTeam/name' or 'alertPriority', with boolean fields like
@@ -35,7 +35,7 @@ var (
 		so for example tag 'foo' becomes label 'foo' value 'true' and tag 'foo: bar'
 		becomes label 'foo' value 'bar'. Label selector then allows you to use
 		expressions with operators like '=', '==', '!=', 'in', 'notin', 'X', '!X'.
-		
+
 		The second is a kubectl-like field selector specified with '--field-selector'
 		flag. This is similar but simpler, fields are exactly the same as fields in
 		heartbeat object with first letter lowercased, and the only operators allowed
