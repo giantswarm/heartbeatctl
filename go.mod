@@ -7,7 +7,7 @@ toolchain go1.25.0
 require (
 	github.com/MakeNowJust/heredoc/v2 v2.0.1
 	github.com/golang/mock v1.6.0
-	github.com/onsi/ginkgo/v2 v2.25.1
+	github.com/onsi/ginkgo/v2 v2.25.2
 	github.com/onsi/gomega v1.38.2
 	github.com/opsgenie/opsgenie-go-sdk-v2 v1.2.23
 	github.com/ryanuber/columnize v2.1.2+incompatible
