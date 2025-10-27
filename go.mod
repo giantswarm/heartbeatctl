@@ -7,7 +7,7 @@ toolchain go1.25.3
 require (
 	github.com/MakeNowJust/heredoc/v2 v2.0.1
 	github.com/golang/mock v1.6.0
-	github.com/onsi/ginkgo/v2 v2.26.0
+	github.com/onsi/ginkgo/v2 v2.27.2
 	github.com/onsi/gomega v1.38.2
 	github.com/opsgenie/opsgenie-go-sdk-v2 v1.2.23
 	github.com/ryanuber/columnize v2.1.2+incompatible
@@ -27,7 +27,6 @@ require (
 	github.com/hashicorp/go-retryablehttp v0.7.7 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
-	go.uber.org/automaxprocs v1.6.0 // indirect
 	go.yaml.in/yaml/v3 v3.0.4 // indirect
 	golang.org/x/mod v0.27.0 // indirect
 	golang.org/x/net v0.43.0 // indirect
